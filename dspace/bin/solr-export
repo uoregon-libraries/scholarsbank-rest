@@ -24,9 +24,9 @@ curl -g "http://localhost:8983/solr/statistics/select?q=type:0&rows=0&facet.fiel
 curl -g "http://localhost:8983/solr/statistics/select?q=type:2&rows=0&facet.field=countryCode&facet.mincount=1&facet.limit=-1&facet.sort=count&facet=true&fq=isBot:false&indent=true&omitHeader=true" -o $DIR/site-country-views.json
 
 # Site top 10 item pageviews
-curl "http://localhost:8983/solr/statistics/select?q=type:2&rows=0&facet=true&facet.field=id&facet.limit=10&facet.mincount=1&fl=score&fq=isBot:false&fq=statistics_type:view&indent=true&wt=json&omitHeader=true" -o $DIR/site-top10-item-pageviews.json
+curl "http://localhost:8983/solr/statistics/select?q=type:2&rows=0&facet=true&facet.field=id&facet.limit=10&facet.mincount=1&fl=score&fq=isBot:false&fq=statistics_type:view&indent=true&wt=json&omitHeader=true&fq=-(id:*unmigrated)" -o $DIR/site-top10-item-pageviews.json
 # Site top 10 item downloads
-curl "http://localhost:8983/solr/statistics/select?q=type:0&rows=0&facet=true&facet.field=owningItem&facet.limit=10&facet.mincount=1&fq=-(bundleName:%5B*+TO+*%5D-bundleName:ORIGINAL)&fq=isBot:false&indent=true&fl=score&wt=json&omitHeader=true" -o $DIR/site-top10-item-downloads.json
+curl "http://localhost:8983/solr/statistics/select?q=type:0&rows=0&facet=true&facet.field=owningItem&facet.limit=10&facet.mincount=1&fq=-(bundleName:%5B*+TO+*%5D-bundleName:ORIGINAL)&fq=isBot:false&indent=true&fl=score&wt=json&omitHeader=true&fq=-(id:*unmigrated)" -o $DIR/site-top10-item-downloads.json
 
 # Site item count
 curl "http://localhost:8983/solr/search/select?q=search.resourcetype:Item&rows=0&indent=on&wt=json&omitHeader=true" -o $DIR/all-item-count.json > /dev/null 2>&1
