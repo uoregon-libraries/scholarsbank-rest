@@ -1933,26 +1933,6 @@
 
         <value-pairs value-pairs-name="common_types" dc-term="type">
             <pair>
-                <displayed-value>Adopted Plan</displayed-value>
-                <stored-value>Adopted Plan</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Animation</displayed-value>
-                <stored-value>Animation</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Architectural Plan</displayed-value>
-                <stored-value>Architectural Plan</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Article</displayed-value>
-                <stored-value>Article</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Blog</displayed-value>
-                <stored-value>Blog</stored-value>
-            </pair>
-            <pair>
                 <displayed-value>Book</displayed-value>
                 <stored-value>Book</stored-value>
             </pair>
@@ -1961,96 +1941,212 @@
                 <stored-value>Book chapter</stored-value>
             </pair>
             <pair>
+                <displayed-value>Conference paper</displayed-value>
+                <stored-value>Conference paper</stored-value>
+            </pair>
+            <pair>
                 <displayed-value>Dataset</displayed-value>
                 <stored-value>Dataset</stored-value>
             </pair>
             <pair>
-                <displayed-value>Educational Plan</displayed-value>
-                <stored-value>Educational Plan</stored-value>
+                <displayed-value>Journal article</displayed-value>
+                <stored-value>Journal article</stored-value>
             </pair>
             <pair>
-                <displayed-value>Learning Object</displayed-value>
-                <stored-value>Learning Object</stored-value>
+                <displayed-value>Newspaper article</displayed-value>
+                <stored-value>Newspaper article</stored-value>
             </pair>
             <pair>
-                <displayed-value>Image</displayed-value>
-                <stored-value>Image</stored-value>
+                <displayed-value>Other</displayed-value>
+                <stored-value>Other</stored-value>
             </pair>
             <pair>
-                <displayed-value>Image, 3-D</displayed-value>
-                <stored-value>Image, 3-D</stored-value>
+                <displayed-value>Patent</displayed-value>
+                <stored-value>Patent</stored-value>
             </pair>
             <pair>
-                <displayed-value>Map</displayed-value>
-                <stored-value>Map</stored-value>
+                <displayed-value>Conference presentation</displayed-value>
+                <stored-value>Conference presentation</stored-value>
             </pair>
             <pair>
-                <displayed-value>Musical Score</displayed-value>
-                <stored-value>Musical Score</stored-value>
+                <displayed-value>Conference poster</displayed-value>
+                <stored-value>Conference poster</stored-value>
             </pair>
             <pair>
-                <displayed-value>Plan or blueprint</displayed-value>
-                <stored-value>Plan or blueprint</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Preprint</displayed-value>
-                <stored-value>Preprint</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Presentation</displayed-value>
-                <stored-value>Presentation</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Recording, acoustical</displayed-value>
-                <stored-value>Recording, acoustical</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Recording, musical</displayed-value>
-                <stored-value>Recording, musical</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Recording, oral</displayed-value>
-                <stored-value>Recording, oral</stored-value>
+                <displayed-value>Report</displayed-value>
+                <stored-value>Report</stored-value>
             </pair>
             <pair>
                 <displayed-value>Software</displayed-value>
                 <stored-value>Software</stored-value>
             </pair>
             <pair>
-                <displayed-value>Technical Report</displayed-value>
-                <stored-value>Technical Report</stored-value>
+                <displayed-value>Dissertation or thesis</displayed-value>
+                <stored-value>Dissertation or thesis</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Physical object</displayed-value>
+                <stored-value>Physical object</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Design</displayed-value>
+                <stored-value>Design</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Image</displayed-value>
+                <stored-value>Image</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Talk, interview, podcast, or speech</displayed-value>
+                <stored-value>Talk, interview, podcast, or speech</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Artistic output or performance</displayed-value>
+                <stored-value>Artistic output or performance</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Preprint</displayed-value>
+                <stored-value>Preprint</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Adopted Plan</displayed-value>
+                <stored-value>Adopted Plan</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Annotation</displayed-value>
+                <stored-value>Annotation</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Blog post</displayed-value>
+                <stored-value>Blog post</stored-value>
+            </pair> 
+            <pair>
+                <displayed-value>Book review</displayed-value>
+                <stored-value>Book review</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Cartographic material</displayed-value>
+                <stored-value>Cartographic material</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Clinical study</displayed-value>
+                <stored-value>Clinical study</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Conference output</displayed-value>
+                <stored-value>Conference output</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Conference proceedings</displayed-value>
+                <stored-value>Conference proceedings</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Data management plan</displayed-value>
+                <stored-value>Data management plan</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Dictionary entry</displayed-value>
+                <stored-value>Dictionary entry</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Encyclopedia entry</displayed-value>
+                <stored-value>Encyclopedia entry</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Interactive resource</displayed-value>
+                <stored-value>Interactive resource</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Invention</displayed-value>
+                <stored-value>Invention</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Journal issue or edition</displayed-value>
+                <stored-value>Journal issue or edition</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Lecture</displayed-value>
+                <stored-value>Lecture</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>License</displayed-value>
+                <stored-value>License</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Magazine article</displayed-value>
+                <stored-value>Magazine article</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Moving image or video</displayed-value>
+                <stored-value>Moving image or video</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Musical composition</displayed-value>
+                <stored-value>Musical composition</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Registered copyright</displayed-value>
+                <stored-value>Registered copyright</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Research protocol or technique</displayed-value>
+                <stored-value>Research protocol or technique</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Research tool</displayed-value>
+                <stored-value>Research tool</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Review</displayed-value>
+                <stored-value>Review</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Sound</displayed-value>
+                <stored-value>Sound</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Standards or policy</displayed-value>
+                <stored-value>Standards or policy</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Supervised student publication</displayed-value>
+                <stored-value>Supervised student publication</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Teaching material</displayed-value>
+                <stored-value>Teaching material</stored-value>
             </pair>
             <pair>
                 <displayed-value>Terminal Project</displayed-value>
                 <stored-value>Terminal Project</stored-value>
             </pair>
             <pair>
-                <displayed-value>Thesis / Dissertation</displayed-value>
-                <stored-value>Thesis / Dissertation</stored-value>
+                <displayed-value>Trademark</displayed-value>
+                <stored-value>Trademark</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Transcription</displayed-value>
+                <stored-value>Transcription</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Translation</displayed-value>
+                <stored-value>Translation</stored-value>
             </pair>
             <pair>
                 <displayed-value>University Record</displayed-value>
                 <stored-value>University Record</stored-value>
             </pair>
             <pair>
-                <displayed-value>Video</displayed-value>
-                <stored-value>Video</stored-value>
-            </pair>
-            <pair>
                 <displayed-value>Website</displayed-value>
                 <stored-value>Website</stored-value>
             </pair>
             <pair>
-                <displayed-value>Working Paper</displayed-value>
-                <stored-value>Working Paper</stored-value>
+                <displayed-value>Working paper</displayed-value>
+                <stored-value>Working paper</stored-value>
             </pair>
             <pair>
                 <displayed-value>Yearbook</displayed-value>
                 <stored-value>Yearbook</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Other</displayed-value>
-                <stored-value>Other</stored-value>
             </pair>
         </value-pairs>
 
