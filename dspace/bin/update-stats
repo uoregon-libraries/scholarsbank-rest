@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# export-data.sh - Master script to run multiple data loading scripts with pauses and input file handling
+DIRECTORY="/usr/local/dspace/bin"
+DIR=/usr/local/dspace-angular/src/assets/data
+
+# Print a header
+echo "Starting data loading process..."
+
+# Run the first script with input file
+echo "Running solr-export..."
+
+if [ -f "$DIRECTORY/solr-export" ]; then
+    source "$DIRECTORY/solr-export"
+else
+    echo "Error: solr-export not found!"
+    exit 1
+fi
+
+# Update data
+echo "Running solr-data-update..."
+
+if [ -f "$DIRECTORY/solr-data-update" ]; then
+    source "$DIRECTORY/solr-data-update"
+else
+    echo "Error: solr-data-update not found!"
+    exit 1
+fi

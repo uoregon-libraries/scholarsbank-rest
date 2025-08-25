@@ -21,6 +21,8 @@ import org.dspace.app.rest.model.UsageReportPointDateRest;
 import org.dspace.app.rest.model.UsageReportPointDsoTotalVisitsRest;
 import org.dspace.app.rest.model.UsageReportRest;
 import org.dspace.content.Bitstream;
+import org.dspace.content.Collection;
+import org.dspace.content.Community;
 import org.dspace.content.DSpaceObject;
 import org.dspace.content.Item;
 import org.dspace.content.Site;
@@ -52,8 +54,13 @@ public class UsageReportUtils {
     public static final String TOTAL_VISITS_REPORT_ID = "TotalVisits";
     public static final String TOTAL_VISITS_PER_MONTH_REPORT_ID = "TotalVisitsPerMonth";
     public static final String TOTAL_DOWNLOADS_REPORT_ID = "TotalDownloads";
+    public static final String TOTAL_DOWNLOADS_PER_MONTH_REPORT_ID = "TotalDownloadsPerMonth";
     public static final String TOP_COUNTRIES_REPORT_ID = "TopCountries";
     public static final String TOP_CITIES_REPORT_ID = "TopCities";
+    public static final String TOP_ITEMS_REPORT_ID = "TopItems";
+    public static final String TOP_BITSTREAMS_REPORT_ID = "TopBitstreams";
+    public static final String TOTAL_VISITS_ITEMS_REPORT_ID = "TotalVisitsItems";
+    public static final String TOTAL_DOWNLOADS_BITSTREAMS_REPORT_ID = "TotalDownloadsBitstreams";
 
     /**
      * Get list of usage reports that are applicable to the DSO (of given UUID)
@@ -72,11 +79,18 @@ public class UsageReportUtils {
         } else {
             usageReports.add(this.createUsageReport(context, dso, TOTAL_VISITS_REPORT_ID));
             usageReports.add(this.createUsageReport(context, dso, TOTAL_VISITS_PER_MONTH_REPORT_ID));
+            usageReports.add(this.createUsageReport(context, dso, TOTAL_DOWNLOADS_PER_MONTH_REPORT_ID));
             usageReports.add(this.createUsageReport(context, dso, TOP_COUNTRIES_REPORT_ID));
             usageReports.add(this.createUsageReport(context, dso, TOP_CITIES_REPORT_ID));
         }
         if (dso instanceof Item || dso instanceof Bitstream) {
             usageReports.add(this.createUsageReport(context, dso, TOTAL_DOWNLOADS_REPORT_ID));
+        }
+        if (dso instanceof Community || dso instanceof Collection) {
+            usageReports.add(this.createUsageReport(context, dso, TOP_ITEMS_REPORT_ID));
+            usageReports.add(this.createUsageReport(context, dso, TOP_BITSTREAMS_REPORT_ID));
+            usageReports.add(this.createUsageReport(context, dso, TOTAL_VISITS_ITEMS_REPORT_ID));
+            usageReports.add(this.createUsageReport(context, dso, TOTAL_DOWNLOADS_BITSTREAMS_REPORT_ID));
         }
         return usageReports;
     }
@@ -107,6 +121,10 @@ public class UsageReportUtils {
                     usageReportRest = resolveTotalDownloads(context, dso);
                     usageReportRest.setReportType(TOTAL_DOWNLOADS_REPORT_ID);
                     break;
+                case TOTAL_DOWNLOADS_PER_MONTH_REPORT_ID:
+                    usageReportRest = resolveTotalDownloadsPerMonth(context, dso);
+                    usageReportRest.setReportType(TOTAL_DOWNLOADS_PER_MONTH_REPORT_ID);
+                    break;
                 case TOP_COUNTRIES_REPORT_ID:
                     usageReportRest = resolveTopCountries(context, dso);
                     usageReportRest.setReportType(TOP_COUNTRIES_REPORT_ID);
@@ -115,10 +133,27 @@ public class UsageReportUtils {
                     usageReportRest = resolveTopCities(context, dso);
                     usageReportRest.setReportType(TOP_CITIES_REPORT_ID);
                     break;
+                case TOP_ITEMS_REPORT_ID:
+                    usageReportRest = resolveTopItems(context, dso);
+                    usageReportRest.setReportType(TOP_ITEMS_REPORT_ID);
+                    break;
+                case TOP_BITSTREAMS_REPORT_ID:
+                    usageReportRest = resolveTopBitstreams(context, dso);
+                    usageReportRest.setReportType(TOP_BITSTREAMS_REPORT_ID);
+                    break;
+                case TOTAL_VISITS_ITEMS_REPORT_ID:
+                    usageReportRest = resolveTotalVisitsItems(context, dso);
+                    usageReportRest.setReportType(TOTAL_VISITS_ITEMS_REPORT_ID);
+                    break;
+                case TOTAL_DOWNLOADS_BITSTREAMS_REPORT_ID:
+                    usageReportRest = resolveTotalDownloadsBitstreams(context, dso);
+                    usageReportRest.setReportType(TOTAL_DOWNLOADS_BITSTREAMS_REPORT_ID);
+                    break;
                 default:
                     throw new ResourceNotFoundException("The given report id can't be resolved: " + reportId + "; " +
-                                                        "available reports: TotalVisits, TotalVisitsPerMonth, " +
-                                                        "TotalDownloads, TopCountries, TopCities");
+                                                        "available reports: TotalVisits, TotalVisitsPerMonth, TotalDownloadsPerMonth, " +
+                                                        "TotalDownloads, TopCountries, TopCities" +
+                                                        "TopBitstreams, totalVisitsItems, totalDownloadsBitstreams");
             }
             usageReportRest.setId(dso.getID() + "_" + reportId);
             return usageReportRest;
@@ -196,7 +231,7 @@ public class UsageReportUtils {
 
     /**
      * Create a stat usage report for the amount of TotalVisitPerMonth on a DSO, containing one point for each month
-     * with the views on that DSO in that month with the range -6 months to now. If there are no views on the DSO
+     * with the views on that DSO in that month with the range -5 months to now. If there are no views on the DSO
      * in a month, the point on that month contains views=0.
      *
      * @param context DSpace context
@@ -208,7 +243,7 @@ public class UsageReportUtils {
         StatisticsTable statisticsTable = new StatisticsTable(new StatisticsDataVisits(dso));
         DatasetTimeGenerator timeAxis = new DatasetTimeGenerator();
         // TODO month start and end as request para?
-        timeAxis.setDateInterval("month", "-6", "+1");
+        timeAxis.setDateInterval("month", "-5", "+1");
         statisticsTable.addDatasetGenerator(timeAxis);
         DatasetDSpaceObjectGenerator dsoAxis = new DatasetDSpaceObjectGenerator();
         dsoAxis.addDsoChild(dso.getType(), 10, false, -1);
@@ -264,6 +299,54 @@ public class UsageReportUtils {
     }
 
     /**
+     * Create a stat usage report for the amount of TotalDownloadsPerMonth on a DSO, containing one point for each month
+     * with the views on that DSO in that month with the range -5 months to now. If there are no views on the DSO
+     * in a month, the point on that month contains views=0.
+     *
+     * @param context DSpace context
+     * @param dso     DSO we want usage report with TotalDownloadsPerMonth to the DSO
+     * @return Rest object containing the TotalDownloads usage report on the given DSO
+     */
+    private UsageReportRest resolveTotalDownloadsPerMonth(Context context, DSpaceObject dso)
+        throws SQLException, IOException, ParseException, SolrServerException {
+        if (dso instanceof org.dspace.content.Bitstream) {
+            return this.resolveTotalVisitsPerMonth(context, dso);
+        }
+
+        if (dso instanceof org.dspace.content.Item || dso instanceof Collection || dso instanceof Community) {
+            StatisticsTable statisticsTable = new StatisticsTable(new StatisticsDataVisits(dso));
+            DatasetTimeGenerator timeAxis = new DatasetTimeGenerator();
+            // TODO month start and end as request para?
+            timeAxis.setDateInterval("month", "-5", "+1");
+            statisticsTable.addDatasetGenerator(timeAxis);
+            DatasetDSpaceObjectGenerator dsoAxis = new DatasetDSpaceObjectGenerator();
+            dsoAxis.addDsoChild(Constants.BITSTREAM, -1, false, -1);
+            statisticsTable.addDatasetGenerator(dsoAxis);
+            Dataset dataset = statisticsTable.getDataset(context, 0);
+
+            UsageReportRest usageReportRest = new UsageReportRest();
+            for (int i = 0; i < dataset.getColLabels().size(); i++) {
+                UsageReportPointDateRest monthPoint = new UsageReportPointDateRest();
+                monthPoint.setId(dataset.getColLabelsAttrs().get(i).get("id"));
+                monthPoint.setLabel(dataset.getColLabels().get(i));
+
+                if (dataset.getRowLabels().size() > 0) {
+                    int count = 0;
+                    for (int j = 0; j < dataset.getRowLabels().size(); j++) {
+                        count += Integer.valueOf(dataset.getMatrix()[j][i]);
+                    }
+                    monthPoint.addValue("views", count);
+                } else {
+                    monthPoint.addValue("views", 0);
+                }                
+                usageReportRest.addPoint(monthPoint);
+            }
+            return usageReportRest;
+        }
+        throw new IllegalArgumentException("TotalDownloadsPerMonth report only available for communities, collections, items and bitstreams");
+    }
+
+    /**
      * Create a stat usage report for the TopCountries that have visited the given DSO. If there have been no visits, or
      * no visits with a valid Geolite determined country (based on IP), this report contains an empty list of points=[].
      * The list of points is limited to the top 100 countries, and each point contains the country name, its iso code
@@ -309,6 +392,168 @@ public class UsageReportUtils {
             usageReportRest.addPoint(cityPoint);
         }
         return usageReportRest;
+    }
+
+    /**
+     * Create stat usage report of the items most popular over a DSO container (Community or Collection)
+     *
+     * @param context DSpace context
+     * @param dso DSO container on which we want the TopItems
+     * @return Usage report with top most popular items of dso
+     */
+    private UsageReportRest resolveTopItems(Context context, DSpaceObject dso)
+            throws SQLException, IOException, ParseException, SolrServerException {
+        if (dso instanceof Collection || dso instanceof Community) {
+            //Generate listing with a DSO object base
+            StatisticsListing statListing = new StatisticsListing(new StatisticsDataVisits(dso));
+
+            //Adding filter to get the top 10 items
+            DatasetDSpaceObjectGenerator dsoAxis = new DatasetDSpaceObjectGenerator();
+            dsoAxis.addDsoChild(Constants.ITEM, 10, false, -1);
+            statListing.addDatasetGenerator(dsoAxis);
+
+            Dataset dataset = statListing.getDataset(context, 1);
+
+            UsageReportRest usageReportRest = new UsageReportRest();
+            for (int i = 0; i < dataset.getColLabels().size(); i++) {
+                UsageReportPointDsoTotalVisitsRest totalVisitPoint = new UsageReportPointDsoTotalVisitsRest();
+                totalVisitPoint.setType("item");
+                String urlOfItem = dataset.getColLabelsAttrs().get(i).get("url");
+                if (urlOfItem != null) {
+                    String handle = StringUtils.substringAfterLast(urlOfItem, "handle/");
+                    if (handle != null) {
+                        DSpaceObject item = handleService.resolveToObject(context, handle);
+                        totalVisitPoint.setId(item != null ? item.getID().toString() : urlOfItem);
+                        totalVisitPoint.setLabel(item != null ? item.getName() : urlOfItem);
+                        totalVisitPoint.addValue("views", Integer.valueOf(dataset.getMatrix()[0][i]));
+                        usageReportRest.addPoint(totalVisitPoint);
+                    }
+                }
+            }
+            return usageReportRest;
+        }
+        throw new IllegalArgumentException("TopItems report only available for community and collections");
+    }
+
+    /**
+     * Get total visits usage report over items related a DSO container (Community or Collection)
+     *
+     * @param context DSpace context
+     * @param dso DSO container on which we want the report
+     * @return Usage report with item's visits total
+     */
+    private UsageReportRest resolveTotalVisitsItems(Context context, DSpaceObject dso)
+            throws SQLException, IOException, ParseException, SolrServerException {
+        if (dso instanceof Collection || dso instanceof Community) {
+            //Generate listing with a DSO object base
+            StatisticsListing statListing = new StatisticsListing(new StatisticsDataVisits(dso));
+
+            //Adding filter to get the top 10 items
+            DatasetDSpaceObjectGenerator dsoAxis = new DatasetDSpaceObjectGenerator();
+            dsoAxis.addDsoChild(Constants.ITEM, -1, false, -1);
+            statListing.addDatasetGenerator(dsoAxis);
+
+            Dataset dataset = statListing.getDataset(context, 1);
+
+            UsageReportRest usageReportRest = new UsageReportRest();
+            UsageReportPointDsoTotalVisitsRest totalVisitPoint = new UsageReportPointDsoTotalVisitsRest();
+            totalVisitPoint.setType(StringUtils.substringAfterLast(dso.getClass().getName().toLowerCase(), "."));
+            totalVisitPoint.setId(dso.getID().toString());
+            totalVisitPoint.setLabel(dso.getName());
+            if (dataset.getColLabels().size() > 0) {
+                int count = 0;
+                for (int i = 0; i < dataset.getColLabels().size(); i++) {
+                    count += Integer.valueOf(dataset.getMatrix()[0][i]);
+                }
+                totalVisitPoint.addValue("views", count);
+            } else {
+                totalVisitPoint.addValue("views", 0);
+            }
+
+            usageReportRest.addPoint(totalVisitPoint);
+            return usageReportRest;
+        }
+        throw new IllegalArgumentException("totalVisitsItems report only available for community and collections");
+    }
+
+    /**
+     * Create stat usage report of the bitstream most popular over a DSO container (Community or Collection)
+     *
+     * @param context DSpace context
+     * @param dso DSO container on which we want the TopBitstreams
+     * @return Usage report with top most popular items of dso
+     */
+    private UsageReportRest resolveTopBitstreams(Context context, DSpaceObject dso)
+            throws SQLException, IOException, ParseException, SolrServerException {
+        if (dso instanceof Collection || dso instanceof Community) {
+            //Generate listing with a DSO object base
+            StatisticsListing statListing = new StatisticsListing(new StatisticsDataVisits(dso));
+
+            //Adding filter to get the top 10 bitstreams
+            DatasetDSpaceObjectGenerator dsoAxis = new DatasetDSpaceObjectGenerator();
+            dsoAxis.addDsoChild(Constants.BITSTREAM, 10, false, -1);
+            statListing.addDatasetGenerator(dsoAxis);
+
+            Dataset dataset = statListing.getDataset(context, 1);
+
+            UsageReportRest usageReportRest = new UsageReportRest();
+            for (int i = 0; i < dataset.getColLabels().size(); i++) {
+                UsageReportPointDsoTotalVisitsRest totalDownloadsPoint = new UsageReportPointDsoTotalVisitsRest();
+                totalDownloadsPoint.setType("bitstream");
+
+                totalDownloadsPoint.setId(dataset.getColLabelsAttrs().get(i).get("id"));
+
+                totalDownloadsPoint.setLabel(dataset.getColLabels().get(i) + "("
+                    + "Item: " + dataset.getColLabelsAttrs().get(i).get("item") + ")");
+
+                totalDownloadsPoint.addValue("views", Integer.valueOf(dataset.getMatrix()[0][i]));
+                usageReportRest.addPoint(totalDownloadsPoint);
+            }
+            return usageReportRest;
+        }
+        throw new IllegalArgumentException("TopBitstreams report only available for community and collections");
+    }
+
+    /**
+     * Get total downloads usage report over bitstreams related to a DSO container (Community or Collection)
+     *
+     * @param context DSpace context
+     * @param dso DSO container on which we want the report
+     * @return Usage report with item's visits total
+     */
+    private UsageReportRest resolveTotalDownloadsBitstreams(Context context, DSpaceObject dso)
+            throws SQLException, IOException, ParseException, SolrServerException {
+        if (dso instanceof Collection || dso instanceof Community) {
+            //Generate listing with a DSO object base
+            StatisticsListing statListing = new StatisticsListing(new StatisticsDataVisits(dso));
+
+            //Adding filter to get the top 10 items
+            DatasetDSpaceObjectGenerator dsoAxis = new DatasetDSpaceObjectGenerator();
+            dsoAxis.addDsoChild(Constants.BITSTREAM, -1, false, -1);
+            statListing.addDatasetGenerator(dsoAxis);
+
+            Dataset dataset = statListing.getDataset(context, 1);
+
+            UsageReportRest usageReportRest = new UsageReportRest();
+            UsageReportPointDsoTotalVisitsRest totalVisitPoint = new UsageReportPointDsoTotalVisitsRest();
+            totalVisitPoint.setType(StringUtils.substringAfterLast(dso.getClass().getName().toLowerCase(), "."));
+            totalVisitPoint.setId(dso.getID().toString());
+            totalVisitPoint.setLabel(dso.getName());
+            if (dataset.getColLabels().size() > 0) {
+                int count = 0;
+                for (int i = 0; i < dataset.getColLabels().size(); i++) {
+                    count += Integer.valueOf(dataset.getMatrix()[0][i]);
+                }
+                totalVisitPoint.addValue("views", count);
+            } else {
+                totalVisitPoint.addValue("views", 0);
+            }
+
+            usageReportRest.addPoint(totalVisitPoint);
+            return usageReportRest;
+        }
+        throw new IllegalArgumentException("totalDownloadsBitstreams report only available for community "
+            + "and collections");
     }
 
     /**
