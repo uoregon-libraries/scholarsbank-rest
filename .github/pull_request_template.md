@@ -1,9 +1,8 @@
 ## References
 
 _Add references/links to any related issues or PRs. These may include:_
-
-* Fixes #`issue-number` (if this fixes an issue ticket)
-* Related to #`pr-number`  (if a corresponding PR exists)
+* Fixes #issue-number (if this fixes an issue ticket)
+* Related to DSpace/RestContract#pr-number  (if a corresponding REST Contract PR exists)
 
 ## Description
 
