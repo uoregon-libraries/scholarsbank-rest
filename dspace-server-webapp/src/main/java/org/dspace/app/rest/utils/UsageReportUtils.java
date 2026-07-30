@@ -252,12 +252,7 @@ public class UsageReportUtils {
 
         StatisticsTable statisticsTable = new StatisticsTable(new StatisticsDataVisits(dso));
         DatasetTimeGenerator timeAxis = new DatasetTimeGenerator();
-<<<<<<< HEAD
-        // TODO month start and end as request para?
-        timeAxis.setDateInterval("month", "-5", "+1");
-=======
         timeAxis.setDateInterval("month", startDateInterval, endDateInterval);
->>>>>>> dspace-9.3
         statisticsTable.addDatasetGenerator(timeAxis);
         DatasetDSpaceObjectGenerator dsoAxis = new DatasetDSpaceObjectGenerator();
         dsoAxis.addDsoChild(dso.getType(), 10, false, -1);
