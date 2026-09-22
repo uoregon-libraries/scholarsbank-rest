@@ -9,7 +9,7 @@
  <!-- taskset name 'none' indicates that there is no taskset to perform.     -->
 
  <taskset-map>
-   <mapping collection-handle="default" taskset="none" />
+   <mapping collection-handle="default" taskset="accessibilityremediation" />
  </taskset-map>
 
  <!-- Tasksets specify curation tasks to be automatically performed at       -->
@@ -73,6 +73,16 @@
        </task>
      </flowstep>
    </taskset>
+
+   
+   <taskset name="accessibilityremediation">
+      <flowstep name="finaleditstep">
+        <task name="AccessibilityRemediation">
+          <workflow>reject</workflow>
+          <notify on="fail">$flowgroup</notify>
+        </task>
+      </flowstep>
+    </taskset>
 
     <!-- We require an empty taskset to match "none" mappings.  DO NOT REMOVE! -->
     <taskset name='none'/>
