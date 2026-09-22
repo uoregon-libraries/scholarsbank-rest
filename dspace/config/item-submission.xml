@@ -276,6 +276,13 @@
             <processing-class>org.dspace.app.rest.submit.step.ShowIdentifiersStep</processing-class>
             <type>identifiers</type>
         </step-definition>
+
+        <!-- Custom accessibility attestation step -->
+        <step-definition id="accessibility_attestation" mandatory="true">
+            <heading>submit.progressbar.accessibilityAttestation</heading>
+            <processing-class>org.dspace.app.rest.submit.step.AccessibilityAttestationStep</processing-class>
+            <type>accessibility-attestation</type>
+        </step-definition>
     </step-definitions>
 
     <!-- The submission-definitions map lays out the detailed definition of -->
@@ -325,6 +332,7 @@
 
             <!--Step will be to Sign off on the required DSpace License agreement -->
             <step id="license"/>
+            <step id="accessibility_attestation"></step>
         </submission-process>
         <submission-process name="simple">
             <step id="collection"/>
@@ -332,6 +340,7 @@
             <step id="simplepage1"/>
             <step id="licesnse_uo"/>
             <step id="license"/>
+            <step id="accessibility_attestation"></step>
         </submission-process>
         <submission-process name="pub">
             <step id="collection"/>
@@ -339,6 +348,7 @@
             <step id="pubpage1"/>
             <step id="licesnse_uo"/>
             <step id="license"/>
+            <step id="accessibility_attestation"></step>
         </submission-process>
         <submission-process name="dlcd">
             <step id="collection"/>
@@ -346,6 +356,7 @@
             <step id="dlcdpage1"/>
             <step id="licesnse_uo"/>
             <step id="license"/>
+            <step id="accessibility_attestation"></step>
         </submission-process>
         <submission-process name="ugrad-research">
             <step id="collection"/>
@@ -353,6 +364,7 @@
             <step id="ugrad-researchpage1"/>
             <step id="licesnse_uo"/>
             <step id="license"/>
+            <step id="accessibility_attestation"></step>
         </submission-process>
         <submission-process name="pppm">
             <step id="collection"/>
@@ -361,6 +373,7 @@
             <step id="pppmpage2"/>
             <step id="licesnse_uo"/>
             <step id="license"/>
+            <step id="accessibility_attestation"></step>
         </submission-process>
         <!--
         Submission Process for 'Publication' Entities.

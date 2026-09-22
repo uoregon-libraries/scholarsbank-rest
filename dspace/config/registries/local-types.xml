@@ -31,5 +31,11 @@
     <scope_note>Description of example metadata field.</scope_note>
   </dc-type>
 -->
+  <dc-type>
+    <schema>local</schema>
+    <element>accessibility</element>
+    <qualifier>attestation</qualifier>
+    <scope_note>Author attestation for accessibility compliance.</scope_note>
+  </dc-type>
 
 </dspace-dc-types>

@@ -31,6 +31,11 @@
         <property name="name" value="license"/>
     </bean>
 
+    <bean name="accessibilityAttestationValidation" class="org.dspace.app.rest.submit.step.validation.AccessibilityAttestationValidation">
+        <property name="name" value="accessibility-attestation"/>
+        <property name="itemService" ref="org.dspace.content.ItemServiceImpl"/>
+    </bean>
+
     <bean name="COARNotifyValidation" class="org.dspace.app.rest.submit.step.validation.NotifyValidation" scope="prototype">
         <property name="name" value="coarnotify"/>
         <property name="coarNotifyConfigurationService" ref="org.dspace.coarnotify.NotifyConfigurationService"/>
