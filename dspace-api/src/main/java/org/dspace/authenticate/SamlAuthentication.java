@@ -8,10 +8,13 @@
 package org.dspace.authenticate;
 
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,6 +31,7 @@ import org.dspace.content.factory.ContentServiceFactory;
 import org.dspace.content.service.MetadataFieldService;
 import org.dspace.content.service.MetadataSchemaService;
 import org.dspace.core.Context;
+import org.dspace.core.LogHelper;
 import org.dspace.eperson.EPerson;
 import org.dspace.eperson.Group;
 import org.dspace.eperson.factory.EPersonServiceFactory;
@@ -178,7 +182,33 @@ public class SamlAuthentication implements AuthenticationMethod {
 
     @Override
     public List<Group> getSpecialGroups(Context context, HttpServletRequest request) throws SQLException {
-        return List.of();
+        // Prevents anonymous users from being added to this group, and the second check
+        // ensures they are password users
+        try {
+            // User has successfully authenticated via saml.
+            if (request != null &&
+                context.getCurrentUser() != null) {
+                String groupName = DSpaceServicesFactory.getInstance().getConfigurationService()
+                                                        .getProperty("authentication-saml.login.specialgroup");
+                if ((groupName != null) && !groupName.trim().isEmpty()) {
+                    Group specialGroup = EPersonServiceFactory.getInstance().getGroupService()
+                                                              .findByName(context, groupName);
+                    if (specialGroup == null) {
+                        // Oops - the group isn't there.
+                        log.warn(LogHelper.getHeader(context,
+                                                      "saml_specialgroup",
+                                                      "Group defined in modules/authentication-saml.cfg login" +
+                                                          ".specialgroup does not exist"));
+                        return Collections.EMPTY_LIST;
+                    } else {
+                        return Arrays.asList(specialGroup);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error(LogHelper.getHeader(context, "getSpecialGroups", ""), e);
+        }
+        return Collections.EMPTY_LIST;
     }
 
     @Override
