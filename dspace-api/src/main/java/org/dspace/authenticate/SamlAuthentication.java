@@ -182,8 +182,7 @@ public class SamlAuthentication implements AuthenticationMethod {
 
     @Override
     public List<Group> getSpecialGroups(Context context, HttpServletRequest request) throws SQLException {
-        // Prevents anonymous users from being added to this group, and the second check
-        // ensures they are password users
+        // Prevents anonymous users from being added to this group
         try {
             // User has successfully authenticated via saml.
             if (request != null &&
