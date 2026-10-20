@@ -32,4 +32,11 @@
   </dc-type>
 -->
 
+<dc-type>
+  <schema>local</schema>
+  <element>collection</element>
+  <qualifier></qualifier>
+  <scope_note>Name of the collection an item should be submitted to.</scope_note>
+</dc-type>
+
 </dspace-dc-types>
