@@ -47,7 +47,22 @@
                 </field>
             </row>
         </form>
-
+        <!-- Form which determines the collection that an item will go to after submission
+         if it is submitted through the default submission collection -->
+        <form name="destined_collection">
+            <row>
+                <field>
+                    <dc-schema>local</dc-schema>
+                    <dc-element>collection</dc-element>
+                    <dc-qualifier></dc-qualifier>
+                    <repeatable>true</repeatable>
+                    <label>Destined Collection</label>
+                    <input-type>onebox</input-type>
+                    <hint>Enter the collection name.</hint>
+                    <required></required>
+                </field>
+            </row>
+        </form>
         <!-- Form which defines the first page/section of the "traditional" DSpace submission process,
              often used when depositing normal Items (i.e. Items which are not Entities). -->
         <form name="traditionalpageone">
