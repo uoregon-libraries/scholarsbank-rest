@@ -59,7 +59,7 @@
                     <label>Destined Collection</label>
                     <input-type>onebox</input-type>
                     <hint>Enter the collection name.</hint>
-                    <required></required>
+                    <required>You must enter a collection name for deposit.</required>
                 </field>
             </row>
         </form>
