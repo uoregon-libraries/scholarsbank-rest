@@ -144,6 +144,7 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
 
         user = EPersonBuilder.createEPerson(context)
             .withEmail("user@example.com")
+            .withNameInMetadata("Example", "User")
             .withPassword(password)
             .build();
 
@@ -323,7 +324,7 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
     public void testCreateAndReturn() throws Exception {
 
         String id = user.getID().toString();
-        String name = user.getName();
+        String name = user.getFullName();
 
         String authToken = getAuthToken(user.getEmail(), password);
 
@@ -342,6 +343,8 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.type", is("item")))
             .andExpect(jsonPath("$.metadata", matchMetadata("dspace.object.owner", name, id, 0)))
+            .andExpect(jsonPath("$.metadata", matchMetadata("person.givenName", user.getFirstName(), 0)))
+            .andExpect(jsonPath("$.metadata", matchMetadata("person.familyName", user.getLastName(), 0)))
             .andExpect(jsonPath("$.metadata", matchMetadata("dspace.entity.type", "Person", 0)));
 
         getClient(authToken).perform(get("/api/eperson/profiles/{id}/eperson", id))
@@ -391,7 +394,7 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
     public void testCreateAndReturnWithAdmin() throws Exception {
 
         String id = user.getID().toString();
-        String name = user.getName();
+        String name = user.getFullName();
 
         configurationService.setProperty("researcher-profile.collection.uuid", null);
 
@@ -412,6 +415,8 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
         getClient(authToken).perform(get("/api/eperson/profiles/{id}/item", id))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.type", is("item")))
+            .andExpect(jsonPath("$.metadata", matchMetadata("person.givenName", user.getFirstName(), 0)))
+            .andExpect(jsonPath("$.metadata", matchMetadata("person.familyName", user.getLastName(), 0)))
             .andExpect(jsonPath("$.metadata", matchMetadata("dspace.object.owner", name, id, 0)))
             .andExpect(jsonPath("$.metadata", matchMetadata("dspace.entity.type", "Person", 0)));
 
@@ -1023,6 +1028,22 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
         String secondItemId = getItemIdByProfileId(newUserToken, id);
         assertEquals("The item should be the same", firstItemId, secondItemId);
 
+        getClient(getAuthToken(admin.getEmail(), password))
+                .perform(get("/api/authz/resourcepolicies/search/resource")
+                        .param("uuid", firstItemId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.resourcepolicies",
+                        hasItem(matchResourcePolicyProperties(null, user, itemToBeClaimed, null,
+                                Constants.WRITE, null))));
+
+        getClient(newUserToken)
+                .perform(get("/api/authz/authorizations/search/object")
+                        .param("uri", "http://localhost/api/core/items/" + firstItemId)
+                        .param("feature", "canEditMetadata")
+                        .param("embed", "feature"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.authorizations[0]._embedded.feature.id")
+                        .value("canEditMetadata"));
     }
 
     @Test
@@ -1747,14 +1768,15 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
         context.turnOffAuthorisationSystem();
 
         EPerson ePerson = EPersonBuilder.createEPerson(context)
-                                        .withCanLogin(true)
-                                        .withOrcid("0000-1111-2222-3333")
-                                        .withOrcidScope("/read")
-                                        .withOrcidScope("/write")
-                                        .withEmail("test@email.it")
-                                        .withPassword(password)
-                                        .withNameInMetadata("Test", "User")
-                                        .build();
+            .withCanLogin(true)
+            .withOrcid("0000-1111-2222-3333")
+            .withNetId("0000-1111-2222-3333")
+            .withOrcidScope("/read")
+            .withOrcidScope("/write")
+            .withEmail("test@email.it")
+            .withPassword(password)
+            .withNameInMetadata("Test", "User")
+            .build();
 
         OrcidTokenBuilder.create(context, ePerson, "3de2e370-8aa9-4bbe-8d7e-f5b1577bdad4").build();
 
@@ -1774,7 +1796,9 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
             .andExpect(status().isForbidden());
 
         profile = context.reloadEntity(profile);
+        ePerson = context.reloadEntity(ePerson);
 
+        assertThat(ePerson.getNetid(), notNullValue());
         assertThat(getMetadataValues(profile, "person.identifier.orcid"), not(empty()));
         assertThat(getMetadataValues(profile, "dspace.orcid.scope"), not(empty()));
         assertThat(getMetadataValues(profile, "dspace.orcid.authenticated"), not(empty()));
@@ -1789,14 +1813,15 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
         context.turnOffAuthorisationSystem();
 
         EPerson ePerson = EPersonBuilder.createEPerson(context)
-                                        .withCanLogin(true)
-                                        .withOrcid("0000-1111-2222-3333")
-                                        .withOrcidScope("/read")
-                                        .withOrcidScope("/write")
-                                        .withEmail("test@email.it")
-                                        .withPassword(password)
-                                        .withNameInMetadata("Test", "User")
-                                        .build();
+            .withCanLogin(true)
+            .withOrcid("0000-1111-2222-3333")
+            .withNetId("0000-1111-2222-3333")
+            .withOrcidScope("/read")
+            .withOrcidScope("/write")
+            .withEmail("test@email.it")
+            .withPassword(password)
+            .withNameInMetadata("Test", "User")
+            .build();
 
         OrcidTokenBuilder.create(context, ePerson, "3de2e370-8aa9-4bbe-8d7e-f5b1577bdad4").build();
 
@@ -1816,7 +1841,9 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
             .andExpect(status().isForbidden());
 
         profile = context.reloadEntity(profile);
+        ePerson = context.reloadEntity(ePerson);
 
+        assertThat(ePerson.getNetid(), notNullValue());
         assertThat(getMetadataValues(profile, "person.identifier.orcid"), not(empty()));
         assertThat(getMetadataValues(profile, "dspace.orcid.scope"), not(empty()));
         assertThat(getMetadataValues(profile, "dspace.orcid.authenticated"), not(empty()));
@@ -1831,14 +1858,15 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
         context.turnOffAuthorisationSystem();
 
         EPerson ePerson = EPersonBuilder.createEPerson(context)
-                                        .withCanLogin(true)
-                                        .withOrcid("0000-1111-2222-3333")
-                                        .withOrcidScope("/read")
-                                        .withOrcidScope("/write")
-                                        .withEmail("test@email.it")
-                                        .withPassword(password)
-                                        .withNameInMetadata("Test", "User")
-                                        .build();
+            .withCanLogin(true)
+            .withOrcid("0000-1111-2222-3333")
+            .withNetId("0000-1111-2222-3333")
+            .withOrcidScope("/read")
+            .withOrcidScope("/write")
+            .withEmail("test@email.it")
+            .withPassword(password)
+            .withNameInMetadata("Test", "User")
+            .build();
 
         OrcidTokenBuilder.create(context, ePerson, "3de2e370-8aa9-4bbe-8d7e-f5b1577bdad4").build();
 
@@ -1865,7 +1893,9 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
             .andExpect(status().isForbidden());
 
         profile = context.reloadEntity(profile);
+        ePerson = context.reloadEntity(ePerson);
 
+        assertThat(ePerson.getNetid(), notNullValue());
         assertThat(getMetadataValues(profile, "person.identifier.orcid"), not(empty()));
         assertThat(getMetadataValues(profile, "dspace.orcid.scope"), not(empty()));
         assertThat(getMetadataValues(profile, "dspace.orcid.authenticated"), not(empty()));
@@ -1968,7 +1998,9 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
         verifyNoMoreInteractions(orcidClientMock);
 
         profile = context.reloadEntity(profile);
+        eperson = context.reloadEntity(eperson);
 
+        assertThat(eperson.getNetid(), nullValue());
         assertThat(getMetadataValues(profile, "person.identifier.orcid"), empty());
         assertThat(getMetadataValues(profile, "dspace.orcid.scope"), empty());
         assertThat(getMetadataValues(profile, "dspace.orcid.authenticated"), empty());
@@ -2058,7 +2090,9 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
             .andExpect(status().isForbidden());
 
         profile = context.reloadEntity(profile);
+        eperson = context.reloadEntity(eperson);
 
+        assertThat(eperson.getNetid(), nullValue());
         assertThat(getMetadataValues(profile, "person.identifier.orcid"), not(empty()));
         assertThat(getMetadataValues(profile, "dspace.orcid.scope"), not(empty()));
         assertThat(getMetadataValues(profile, "dspace.orcid.authenticated"), not(empty()));
@@ -2073,14 +2107,15 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
         context.turnOffAuthorisationSystem();
 
         EPerson ePerson = EPersonBuilder.createEPerson(context)
-                                        .withCanLogin(true)
-                                        .withOrcid("0000-1111-2222-3333")
-                                        .withOrcidScope("/read")
-                                        .withOrcidScope("/write")
-                                        .withEmail("test@email.it")
-                                        .withPassword(password)
-                                        .withNameInMetadata("Test", "User")
-                                        .build();
+            .withCanLogin(true)
+            .withOrcid("0000-1111-2222-3333")
+            .withNetId("0000-1111-2222-3333")
+            .withOrcidScope("/read")
+            .withOrcidScope("/write")
+            .withEmail("test@email.it")
+            .withPassword(password)
+            .withNameInMetadata("Test", "User")
+            .build();
 
         OrcidTokenBuilder.create(context, ePerson, "3de2e370-8aa9-4bbe-8d7e-f5b1577bdad4").build();
 
@@ -2100,7 +2135,9 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
             .andExpect(status().isForbidden());
 
         profile = context.reloadEntity(profile);
+        ePerson = context.reloadEntity(ePerson);
 
+        assertThat(ePerson.getNetid(), notNullValue());
         assertThat(getMetadataValues(profile, "person.identifier.orcid"), not(empty()));
         assertThat(getMetadataValues(profile, "dspace.orcid.scope"), not(empty()));
         assertThat(getMetadataValues(profile, "dspace.orcid.authenticated"), not(empty()));
@@ -2115,14 +2152,15 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
         context.turnOffAuthorisationSystem();
 
         EPerson ePerson = EPersonBuilder.createEPerson(context)
-                                        .withCanLogin(true)
-                                        .withOrcid("0000-1111-2222-3333")
-                                        .withOrcidScope("/read")
-                                        .withOrcidScope("/write")
-                                        .withEmail("test@email.it")
-                                        .withPassword(password)
-                                        .withNameInMetadata("Test", "User")
-                                        .build();
+            .withCanLogin(true)
+            .withOrcid("0000-1111-2222-3333")
+            .withNetId("0000-1111-2222-3333")
+            .withOrcidScope("/read")
+            .withOrcidScope("/write")
+            .withEmail("test@email.it")
+            .withPassword(password)
+            .withNameInMetadata("Test", "User")
+            .build();
 
         OrcidTokenBuilder.create(context, ePerson, "3de2e370-8aa9-4bbe-8d7e-f5b1577bdad4").build();
 
@@ -2142,7 +2180,9 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
             .andExpect(status().isForbidden());
 
         profile = context.reloadEntity(profile);
+        ePerson = context.reloadEntity(ePerson);
 
+        assertThat(ePerson.getNetid(), notNullValue());
         assertThat(getMetadataValues(profile, "person.identifier.orcid"), not(empty()));
         assertThat(getMetadataValues(profile, "dspace.orcid.scope"), not(empty()));
         assertThat(getMetadataValues(profile, "dspace.orcid.authenticated"), not(empty()));
@@ -2194,7 +2234,9 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
         verifyNoMoreInteractions(orcidClientMock);
 
         profile = context.reloadEntity(profile);
+        eperson = context.reloadEntity(eperson);
 
+        assertThat(eperson.getNetid(), nullValue());
         assertThat(getMetadataValues(profile, "person.identifier.orcid"), empty());
         assertThat(getMetadataValues(profile, "dspace.orcid.scope"), empty());
         assertThat(getMetadataValues(profile, "dspace.orcid.authenticated"), empty());
@@ -2209,14 +2251,15 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
         context.turnOffAuthorisationSystem();
 
         EPerson ePerson = EPersonBuilder.createEPerson(context)
-                                        .withCanLogin(true)
-                                        .withOrcid("0000-1111-2222-3333")
-                                        .withOrcidScope("/read")
-                                        .withOrcidScope("/write")
-                                        .withEmail("test@email.it")
-                                        .withPassword(password)
-                                        .withNameInMetadata("Test", "User")
-                                        .build();
+            .withCanLogin(true)
+            .withOrcid("0000-1111-2222-3333")
+            .withNetId("0000-1111-2222-3333")
+            .withOrcidScope("/read")
+            .withOrcidScope("/write")
+            .withEmail("test@email.it")
+            .withPassword(password)
+            .withNameInMetadata("Test", "User")
+            .build();
 
         OrcidTokenBuilder.create(context, ePerson, "3de2e370-8aa9-4bbe-8d7e-f5b1577bdad4").build();
 
@@ -2236,7 +2279,9 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
             .andExpect(status().isForbidden());
 
         profile = context.reloadEntity(profile);
+        ePerson = context.reloadEntity(ePerson);
 
+        assertThat(ePerson.getNetid(), notNullValue());
         assertThat(getMetadataValues(profile, "person.identifier.orcid"), not(empty()));
         assertThat(getMetadataValues(profile, "dspace.orcid.scope"), not(empty()));
         assertThat(getMetadataValues(profile, "dspace.orcid.authenticated"), not(empty()));
@@ -2287,7 +2332,9 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
         verifyNoMoreInteractions(orcidClientMock);
 
         profile = context.reloadEntity(profile);
+        eperson = context.reloadEntity(eperson);
 
+        assertThat(eperson.getNetid(), nullValue());
         assertThat(getMetadataValues(profile, "person.identifier.orcid"), empty());
         assertThat(getMetadataValues(profile, "dspace.orcid.scope"), empty());
         assertThat(getMetadataValues(profile, "dspace.orcid.authenticated"), empty());
@@ -2340,7 +2387,9 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
         verifyNoMoreInteractions(orcidClientMock);
 
         profile = context.reloadEntity(profile);
+        eperson = context.reloadEntity(eperson);
 
+        assertThat(eperson.getNetid(), nullValue());
         assertThat(getMetadataValues(profile, "person.identifier.orcid"), empty());
         assertThat(getMetadataValues(profile, "dspace.orcid.scope"), empty());
         assertThat(getMetadataValues(profile, "dspace.orcid.authenticated"), empty());
@@ -2355,14 +2404,15 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
         context.turnOffAuthorisationSystem();
 
         EPerson ePerson = EPersonBuilder.createEPerson(context)
-                                        .withCanLogin(true)
-                                        .withOrcid("0000-1111-2222-3333")
-                                        .withOrcidScope("/read")
-                                        .withOrcidScope("/write")
-                                        .withEmail("test@email.it")
-                                        .withPassword(password)
-                                        .withNameInMetadata("Test", "User")
-                                        .build();
+            .withCanLogin(true)
+            .withOrcid("0000-1111-2222-3333")
+            .withNetId("0000-1111-2222-3333")
+            .withOrcidScope("/read")
+            .withOrcidScope("/write")
+            .withEmail("test@email.it")
+            .withPassword(password)
+            .withNameInMetadata("Test", "User")
+            .build();
 
         OrcidTokenBuilder.create(context, ePerson, "3de2e370-8aa9-4bbe-8d7e-f5b1577bdad4").build();
 
@@ -2382,7 +2432,9 @@ public class ResearcherProfileRestRepositoryIT extends AbstractControllerIntegra
             .andExpect(status().isForbidden());
 
         profile = context.reloadEntity(profile);
+        ePerson = context.reloadEntity(ePerson);
 
+        assertThat(ePerson.getNetid(), notNullValue());
         assertThat(getMetadataValues(profile, "person.identifier.orcid"), not(empty()));
         assertThat(getMetadataValues(profile, "dspace.orcid.scope"), not(empty()));
         assertThat(getMetadataValues(profile, "dspace.orcid.authenticated"), not(empty()));

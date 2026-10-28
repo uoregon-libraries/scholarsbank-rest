@@ -24,6 +24,7 @@
         <name-map collection-handle="1794/13662" submission-name="dlcd"/>
         <name-map collection-handle="1794/18841" submission-name="ugrad-research"/>
         <name-map collection-handle="1794/17" submission-name="pppm"/>
+        <name-map collection-handle="1794/33804" submission-name="saml"/>
 
         <!-- Sample Entities Collection configuration based on the demo Entities dataset available at:
              https://github.com/DSpace-Labs/AIP-Files/releases/tag/demo-entities-data
@@ -108,6 +109,11 @@
 
         <!-- The following set of DescribeStep <step-definition>s all point to forms (of the same name) which are
              defined in submission-forms.xml -->
+        <step-definition id="destined_collection" mandatory="true">
+            <heading>submit.progressbar.describe.stepone</heading>
+            <processing-class>org.dspace.app.rest.submit.step.DescribeStep</processing-class>
+            <type>submission-form</type>
+        </step-definition>
         <step-definition id="traditionalpageone" mandatory="true">
             <heading>submit.progressbar.describe.stepone</heading>
             <processing-class>org.dspace.app.rest.submit.step.DescribeStep</processing-class>
@@ -264,10 +270,10 @@
             <type>sample</type>
         </step-definition>
 
-        <step-definition id="sherpaPolicies" mandatory="true">
-            <heading>submit.progressbar.sherpapolicy</heading>
-            <processing-class>org.dspace.app.rest.submit.step.SherpaPolicyStep</processing-class>
-            <type>sherpaPolicy</type>
+        <step-definition id="opfPolicies" mandatory="true">
+            <heading>submit.progressbar.opfpolicy</heading>
+            <processing-class>org.dspace.app.rest.submit.step.OpenPolicyFinderPolicyStep</processing-class>
+            <type>opfPolicy</type>
         </step-definition>
 
         <!-- New step for show / mint identifiers -->
@@ -312,8 +318,8 @@
             <!-- Uncomment this step to allow the user to embargo or access restrict the entire item -->
             <!-- <step id="itemAccessConditions"/> -->
 
-            <!-- Uncomment this step to show when appropriate publisher policies retrieved from SHERPA/RoMEO -->
-            <!-- <step id="sherpaPolicies"/> -->
+            <!-- Uncomment this step to show when appropriate publisher policies retrieved from Open Policy Finder -->
+            <!-- <step id="opfPolicies"/> -->
 
 
             <!-- <step id="extractionstep"/> -->
@@ -330,6 +336,16 @@
             <step id="collection"/>
             <step id="upload"/>
             <step id="simplepage1"/>
+            <step id="licesnse_uo"/>
+            <step id="license"/>
+        </submission-process>
+        <!-- Submission process for the collections available to submit to by SAML-authorized users -->
+        <submission-process name="saml">
+            <step id="collection"/>
+            <step id="upload"/>
+            <step id="destined_collection"/>
+            <step id="traditionalpageone"/>
+            <step id="traditionalpagetwo"/>
             <step id="licesnse_uo"/>
             <step id="license"/>
         </submission-process>
@@ -457,6 +473,10 @@
 
             <!--Step will be to Sign off on the License -->
             <step id="license"/>
+
+            <!-- Step allows the user to select a Creative Commons License -->
+            <!-- Required for OpenAIREv4 support -->
+            <step id="cclicense"/>
         </submission-process>
         <submission-process name="openAIREPersonSubmission">
             <step id="collection"/>
